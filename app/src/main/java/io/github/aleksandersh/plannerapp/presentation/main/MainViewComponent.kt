@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.FrameLayout
-import androidx.lifecycle.Observer
 import io.github.aleksandersh.plannerapp.R
 import io.github.aleksandersh.plannerapp.presentation.ViewComponent
 import io.github.aleksandersh.plannerapp.presentation.ViewNavigator
@@ -18,6 +17,7 @@ import io.github.aleksandersh.plannerapp.presentation.recordlist.RecordListViewC
 import io.github.aleksandersh.plannerapp.presentation.recordlist.RecordListViewModel
 import io.github.aleksandersh.plannerapp.utils.dip
 import io.github.aleksandersh.plannerapp.utils.frameLayoutParams
+import io.github.aleksandersh.plannerapp.utils.observe
 
 /**
  * Created on 25.11.2018.
@@ -28,7 +28,6 @@ class MainViewComponent(
     private val viewModel: MainViewModel
 ) : ViewComponent<ViewGroup>(R.id.main_component) {
 
-    private val observer = Observer(::onScreenChanged)
     private val navigator: ViewNavigator by lazy { ViewNavigator(this, 0) }
 
     override fun buildView(): ViewGroup {
@@ -38,7 +37,7 @@ class MainViewComponent(
     }
 
     override fun onAttach() {
-        viewModel.router.observe(this, observer)
+        viewModel.router.observe(this, ::onScreenChanged)
     }
 
     private fun onScreenChanged(screen: MainScreen) {
