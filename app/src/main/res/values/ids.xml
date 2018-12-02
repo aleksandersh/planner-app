@@ -7,4 +7,5 @@
     <item name="record_creation_edit_text_date" type="id" />
     <item name="record_creation_edit_text_title" type="id" />
     <item name="record_creation_edit_text_description" type="id" />
+    <item name="record_list_recycler_view" type="id" />
 </resources>

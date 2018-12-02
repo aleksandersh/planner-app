@@ -11,10 +11,11 @@ import androidx.lifecycle.Observer
 import io.github.aleksandersh.plannerapp.R
 import io.github.aleksandersh.plannerapp.presentation.ViewComponent
 import io.github.aleksandersh.plannerapp.presentation.ViewNavigator
-import io.github.aleksandersh.plannerapp.presentation.planner.model.PlannerScreen
+import io.github.aleksandersh.plannerapp.presentation.main.model.MainScreen
 import io.github.aleksandersh.plannerapp.presentation.record.RecordViewComponent
 import io.github.aleksandersh.plannerapp.presentation.record.RecordViewModel
-import io.github.aleksandersh.plannerapp.utils.button
+import io.github.aleksandersh.plannerapp.presentation.recordlist.RecordListViewComponent
+import io.github.aleksandersh.plannerapp.presentation.recordlist.RecordListViewModel
 import io.github.aleksandersh.plannerapp.utils.dip
 import io.github.aleksandersh.plannerapp.utils.frameLayoutParams
 
@@ -40,23 +41,29 @@ class MainViewComponent(
         viewModel.router.observe(this, observer)
     }
 
-    private fun onScreenChanged(screen: PlannerScreen) {
+    private fun onScreenChanged(screen: MainScreen) {
         when (screen) {
-            is PlannerScreen.Main -> navigateMainScreen(navigator)
-            is PlannerScreen.NewRecord -> navigateRecordScreen(navigator, screen.recordViewModel)
+            is MainScreen.RecordList -> navigateRecordListScreen(navigator, screen.viewModel)
+            is MainScreen.NewRecord -> navigateRecordScreen(navigator, screen.viewModel)
         }
     }
 
-    private fun navigateMainScreen(navigator: ViewNavigator) {
+    private fun navigateRecordListScreen(
+        navigator: ViewNavigator,
+        recordListViewModel: RecordListViewModel
+    ) {
         navigator.navigate(
-            getMainScreenComponent(),
+            RecordListViewComponent(context, recordListViewModel),
             frameLayoutParams(MATCH_PARENT, MATCH_PARENT) {
                 gravity = Gravity.CENTER
             }
         )
     }
 
-    private fun navigateRecordScreen(navigator: ViewNavigator, recordViewModel: RecordViewModel) {
+    private fun navigateRecordScreen(
+        navigator: ViewNavigator,
+        recordViewModel: RecordViewModel
+    ) {
         val dip16 = context.dip(16)
         navigator.navigate(
             RecordViewComponent(context, recordViewModel),
@@ -65,26 +72,5 @@ class MainViewComponent(
                 gravity = Gravity.CENTER
             }
         )
-    }
-
-    private fun getMainScreenComponent(): ViewComponent<*> {
-        return object : ViewComponent<ViewGroup>() {
-
-            override fun buildView(): ViewGroup {
-                val dip8 = context.dip(8)
-                return FrameLayout(context).apply {
-                    addView(
-                        context.button {
-                            text = "create"
-                            setOnClickListener { viewModel.onClickCreateRecord() }
-                        },
-                        frameLayoutParams(WRAP_CONTENT, WRAP_CONTENT) {
-                            setMargins(dip8, dip8, dip8, dip8)
-                            gravity = Gravity.CENTER
-                        }
-                    )
-                }
-            }
-        }
     }
 }
