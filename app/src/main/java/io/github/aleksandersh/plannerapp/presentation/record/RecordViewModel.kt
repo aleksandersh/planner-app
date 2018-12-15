@@ -3,13 +3,14 @@ package io.github.aleksandersh.plannerapp.presentation.record
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import io.github.aleksandersh.plannerapp.presentation.BackHandler
+import io.github.aleksandersh.plannerapp.presentation.BaseViewModel
 import io.github.aleksandersh.plannerapp.records.interactor.RecordsInteractor
 import io.github.aleksandersh.plannerapp.records.model.Record
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.coroutines.CoroutineContext
 
 /**
  * Created on 25.11.2018.
@@ -18,7 +19,7 @@ import kotlin.coroutines.CoroutineContext
 class RecordViewModel(
     private val recordsInteractor: RecordsInteractor,
     private val back: () -> Unit
-) : BackHandler, CoroutineScope {
+) : BaseViewModel(), BackHandler {
 
     val date: Date get() = _date
     val isRepeatSelected: Boolean get() = _isRepeatSelected
@@ -27,9 +28,6 @@ class RecordViewModel(
 
     var title: String = ""
     var description: String = ""
-
-    private val viewModelContext = Job()
-    override val coroutineContext: CoroutineContext get() = viewModelContext + Dispatchers.Main
 
     private val _dateTitle = MutableLiveData<String>()
     private val _isCycleShowed = MutableLiveData<Boolean>()
@@ -60,19 +58,19 @@ class RecordViewModel(
     }
 
     fun onClickSaveChanges() {
-        launch(Dispatchers.IO) {
-            val record = Record(
-                id = 0,
-                date = date,
-                title = title,
-                description = description,
-                cycle = "1",
-                repeat = isRepeatSelected
-            )
-            recordsInteractor.updateRecord(record)
-            withContext(Dispatchers.Main) {
-                back()
+        startCoroutine {
+            withContext(Dispatchers.IO) {
+                val record = Record(
+                    id = 0,
+                    date = date,
+                    title = title,
+                    description = description,
+                    cycle = "1",
+                    repeat = isRepeatSelected
+                )
+                recordsInteractor.updateRecord(record)
             }
+            back()
         }
     }
 }

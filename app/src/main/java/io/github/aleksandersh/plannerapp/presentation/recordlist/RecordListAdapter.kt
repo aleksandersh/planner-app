@@ -10,9 +10,10 @@ import io.github.aleksandersh.plannerapp.presentation.recordlist.model.RecordLis
  * @author AleksanderSh
  */
 class RecordListAdapter(
-    private val context: Context,
-    private val items: List<RecordListItem>
+    private val context: Context
 ) : RecyclerView.Adapter<RecordListAdapter.ItemViewHolder>() {
+
+    private var items: List<RecordListItem> = emptyList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
         return ItemViewHolder(RecordItemView(context))
@@ -24,6 +25,10 @@ class RecordListAdapter(
 
     override fun getItemCount(): Int {
         return items.size
+    }
+
+    fun setItems(items: List<RecordListItem>) {
+        this.items = items
     }
 
     class ItemViewHolder(private val view: RecordItemView) : RecyclerView.ViewHolder(view) {

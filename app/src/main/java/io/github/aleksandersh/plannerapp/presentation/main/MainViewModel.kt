@@ -7,8 +7,6 @@ import io.github.aleksandersh.plannerapp.presentation.BackHandler
 import io.github.aleksandersh.plannerapp.presentation.main.model.MainScreen
 import io.github.aleksandersh.plannerapp.presentation.record.RecordViewModel
 import io.github.aleksandersh.plannerapp.presentation.recordlist.RecordListViewModel
-import io.github.aleksandersh.plannerapp.records.interactor.RecordsInteractor
-import io.github.aleksandersh.plannerapp.repository.RecordsRepositoryImpl
 
 /**
  * Created on 25.11.2018.
@@ -20,7 +18,7 @@ class MainViewModel(private val back: () -> Unit) : BackHandler {
 
     private val _router = MutableLiveData<MainScreen>()
 
-    private val recordsRepository = RecordsRepositoryImpl(Dependencies.recordsDao)
+    private val recordsInteractor = Dependencies.recordsInteractor
 
     private val mainRouter = object : MainRouter {
 
@@ -44,13 +42,13 @@ class MainViewModel(private val back: () -> Unit) : BackHandler {
 
     private fun navigateRecordList() {
         backHandler = null
-        _router.value = MainScreen.RecordList(RecordListViewModel(mainRouter))
+        _router.value = MainScreen.RecordList(RecordListViewModel(mainRouter, recordsInteractor))
     }
 
     private fun navigateRecordCreation() {
         val currentBackHandler = backHandler
         val currentScreen = _router.value
-        val screenVm = RecordViewModel(RecordsInteractor(recordsRepository)) {
+        val screenVm = RecordViewModel(recordsInteractor) {
             backHandler = currentBackHandler
             _router.value = currentScreen
         }
