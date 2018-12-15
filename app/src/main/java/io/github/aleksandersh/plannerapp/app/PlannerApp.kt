@@ -12,6 +12,7 @@ class PlannerApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        Dependencies.context = this
         dimens = CachedDimens(this)
     }
 }

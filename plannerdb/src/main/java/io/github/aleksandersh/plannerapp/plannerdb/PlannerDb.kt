@@ -6,6 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import io.github.aleksandersh.plannerapp.plannerdb.converter.DateConverter
+import io.github.aleksandersh.plannerapp.plannerdb.dao.RecordsDao
 import io.github.aleksandersh.plannerapp.plannerdb.entity.RecordEntity
 
 /**
@@ -29,4 +30,6 @@ abstract class PlannerDb : RoomDatabase() {
                 .build()
         }
     }
+
+    abstract fun getRecordsDao(): RecordsDao
 }

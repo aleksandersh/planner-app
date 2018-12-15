@@ -1,1 +1,1 @@
-include ':app', ':plannerdb'
+include ':app', ':plannerdb', ':records'
