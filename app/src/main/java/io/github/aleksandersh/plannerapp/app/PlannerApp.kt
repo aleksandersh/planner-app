@@ -10,12 +10,9 @@ import timber.log.Timber
  */
 class PlannerApp : Application() {
 
-    lateinit var dimens: CachedDimens
-
     override fun onCreate() {
         super.onCreate()
         Dependencies.context = this
-        dimens = CachedDimens(this)
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
         }
