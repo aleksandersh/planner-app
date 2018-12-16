@@ -3,6 +3,7 @@ package io.github.aleksandersh.plannerapp.presentation.recordlist
 import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import io.github.aleksandersh.plannerapp.presentation.BackHandler
 import io.github.aleksandersh.plannerapp.presentation.BaseViewModel
 import io.github.aleksandersh.plannerapp.presentation.main.MainRouter
 import io.github.aleksandersh.plannerapp.presentation.recordlist.model.RecordListItem
@@ -17,8 +18,9 @@ import kotlinx.coroutines.channels.map
  */
 class RecordListViewModel(
     private val mainRouter: MainRouter,
-    private val recordsInteractor: RecordsInteractor
-) : BaseViewModel() {
+    private val recordsInteractor: RecordsInteractor,
+    private val back: () -> Unit
+) : BaseViewModel(), BackHandler {
 
     val items: LiveData<List<RecordListItem>> get() = _items
 
@@ -26,6 +28,11 @@ class RecordListViewModel(
 
     init {
         subscribeRecords()
+    }
+
+    override fun handleBack(): Boolean {
+        back()
+        return true
     }
 
     fun onClickCreateRecord() {

@@ -11,4 +11,6 @@ interface MainRouter {
     fun navigateRecord(id: Long)
 
     fun navigateRecordList()
+
+    fun navigateToday()
 }

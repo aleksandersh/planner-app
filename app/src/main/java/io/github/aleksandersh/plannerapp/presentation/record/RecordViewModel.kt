@@ -81,7 +81,7 @@ class RecordViewModel(
     fun onClickSaveChanges() {
         startCoroutine {
             withContext(Dispatchers.IO) {
-                val record = currentRecord?.copy(
+                val record = currentRecord.copy(
                     date = _date,
                     title = _title,
                     description = _description,

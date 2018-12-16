@@ -7,6 +7,7 @@ import io.github.aleksandersh.plannerapp.presentation.BackHandler
 import io.github.aleksandersh.plannerapp.presentation.main.model.MainScreen
 import io.github.aleksandersh.plannerapp.presentation.record.RecordViewModel
 import io.github.aleksandersh.plannerapp.presentation.recordlist.RecordListViewModel
+import io.github.aleksandersh.plannerapp.presentation.today.TodayViewModel
 
 /**
  * Created on 25.11.2018.
@@ -27,12 +28,14 @@ class MainViewModel(private val back: () -> Unit) : BackHandler {
         override fun navigateRecord(id: Long) = this@MainViewModel.navigateRecord(id)
 
         override fun navigateRecordList() = this@MainViewModel.navigateRecordList()
+
+        override fun navigateToday() = this@MainViewModel.navigateToday()
     }
 
     private var backHandler: BackHandler? = null
 
     init {
-        navigateRecordList()
+        navigateToday()
     }
 
     override fun handleBack(): Boolean {
@@ -43,8 +46,14 @@ class MainViewModel(private val back: () -> Unit) : BackHandler {
     }
 
     private fun navigateRecordList() {
-        backHandler = null
-        _router.value = MainScreen.RecordList(RecordListViewModel(mainRouter, recordsInteractor))
+        val currentBackHandler = backHandler
+        val currentScreen = _router.value
+        val screenVm = RecordListViewModel(mainRouter, recordsInteractor) {
+            backHandler = currentBackHandler
+            _router.value = currentScreen
+        }
+        backHandler = screenVm
+        _router.value = MainScreen.RecordList(screenVm)
     }
 
     private fun navigateRecord(id: Long?) {
@@ -56,5 +65,10 @@ class MainViewModel(private val back: () -> Unit) : BackHandler {
         }
         backHandler = screenVm
         _router.value = MainScreen.NewRecord(screenVm)
+    }
+
+    private fun navigateToday() {
+        backHandler = null
+        _router.value = MainScreen.Today(TodayViewModel(mainRouter, recordsInteractor))
     }
 }

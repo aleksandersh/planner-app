@@ -15,6 +15,8 @@ import io.github.aleksandersh.plannerapp.presentation.record.RecordViewComponent
 import io.github.aleksandersh.plannerapp.presentation.record.RecordViewModel
 import io.github.aleksandersh.plannerapp.presentation.recordlist.RecordListViewComponent
 import io.github.aleksandersh.plannerapp.presentation.recordlist.RecordListViewModel
+import io.github.aleksandersh.plannerapp.presentation.today.TodayViewComponent
+import io.github.aleksandersh.plannerapp.presentation.today.TodayViewModel
 import io.github.aleksandersh.plannerapp.utils.dip
 import io.github.aleksandersh.plannerapp.utils.frameLayoutParams
 import io.github.aleksandersh.plannerapp.utils.observe
@@ -44,6 +46,7 @@ class MainViewComponent(
         when (screen) {
             is MainScreen.RecordList -> navigateRecordListScreen(navigator, screen.viewModel)
             is MainScreen.NewRecord -> navigateRecordScreen(navigator, screen.viewModel)
+            is MainScreen.Today -> navigateTodayScreen(navigator, screen.viewModel)
         }
     }
 
@@ -68,6 +71,18 @@ class MainViewComponent(
             RecordViewComponent(context, recordViewModel),
             frameLayoutParams(MATCH_PARENT, WRAP_CONTENT) {
                 setMargins(dip16, dip16, dip16, dip16)
+                gravity = Gravity.CENTER
+            }
+        )
+    }
+
+    private fun navigateTodayScreen(
+        navigator: ViewNavigator,
+        todayViewModel: TodayViewModel
+    ) {
+        navigator.navigate(
+            TodayViewComponent(context, todayViewModel),
+            frameLayoutParams(MATCH_PARENT, MATCH_PARENT) {
                 gravity = Gravity.CENTER
             }
         )
