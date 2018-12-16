@@ -20,7 +20,7 @@ interface RecordsDao {
     fun requireRecordById(id: Long): RecordEntity
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertRecord(recordEntity: RecordEntity)
+    fun insertRecord(recordEntity: RecordEntity): Long
 
     @Query("DELETE FROM records WHERE id = :recordId")
     fun deleteRecordById(recordId: Long)

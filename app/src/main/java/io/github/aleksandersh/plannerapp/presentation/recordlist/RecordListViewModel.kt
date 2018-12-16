@@ -1,5 +1,6 @@
 package io.github.aleksandersh.plannerapp.presentation.recordlist
 
+import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import io.github.aleksandersh.plannerapp.presentation.BaseViewModel
@@ -31,6 +32,10 @@ class RecordListViewModel(
         mainRouter.navigateRecordCreation()
     }
 
+    private fun onClickRecord(id: Long) {
+        mainRouter.navigateRecord(id)
+    }
+
     private fun subscribeRecords() {
         startCoroutine {
             recordsInteractor.subscribeRecords()
@@ -40,6 +45,6 @@ class RecordListViewModel(
     }
 
     private fun mapRecord(record: Record): RecordListItem {
-        return RecordListItem(record.title)
+        return RecordListItem(record.title, View.OnClickListener { onClickRecord(record.id) })
     }
 }

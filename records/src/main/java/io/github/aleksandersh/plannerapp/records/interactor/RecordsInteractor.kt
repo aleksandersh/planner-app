@@ -22,7 +22,7 @@ class RecordsInteractor(private val recordsRepository: RecordsRepository) {
         return recordsRepository.getRecord(id)
     }
 
-    fun updateRecord(record: Record) {
-        recordsRepository.updateRecord(record)
+    fun updateRecord(record: Record): Record {
+        return recordsRepository.updateRecord(record)
     }
 }

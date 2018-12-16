@@ -8,5 +8,7 @@ interface MainRouter {
 
     fun navigateRecordCreation()
 
+    fun navigateRecord(id: Long)
+
     fun navigateRecordList()
 }

@@ -15,5 +15,5 @@ interface RecordsRepository {
 
     fun getRecord(id: Long): Record
 
-    fun updateRecord(record: Record)
+    fun updateRecord(record: Record): Record
 }

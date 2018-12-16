@@ -46,5 +46,6 @@ class RecordItemView : LinearLayout {
 
     fun setRecordItem(item: RecordListItem) {
         titleTextView.text = item.title
+        setOnClickListener(item.onClickListener)
     }
 }

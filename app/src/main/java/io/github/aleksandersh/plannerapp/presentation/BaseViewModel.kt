@@ -9,9 +9,8 @@ import kotlin.coroutines.CoroutineContext
  */
 open class BaseViewModel : CoroutineScope {
 
-    private val viewModelContext = Job()
-
     override val coroutineContext: CoroutineContext get() = viewModelContext + Dispatchers.Main
+    private val viewModelContext = Job()
 
     protected fun startCoroutine(block: suspend CoroutineScope.() -> Unit): Job {
         return launch(start = CoroutineStart.UNDISPATCHED, block = block)

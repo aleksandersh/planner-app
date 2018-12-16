@@ -38,9 +38,10 @@ class RecordsRepositoryImpl(
         return mapEntityToRecord(recordsDao.requireRecordById(id))
     }
 
-    override fun updateRecord(record: Record) {
-        recordsDao.insertRecord(mapRecordToEntity(record))
+    override fun updateRecord(record: Record): Record {
+        val id = recordsDao.insertRecord(mapRecordToEntity(record))
         refreshRecords()
+        return record.copy(id = id)
     }
 
     private fun refreshRecords() {

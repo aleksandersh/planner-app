@@ -22,7 +22,9 @@ class MainViewModel(private val back: () -> Unit) : BackHandler {
 
     private val mainRouter = object : MainRouter {
 
-        override fun navigateRecordCreation() = this@MainViewModel.navigateRecordCreation()
+        override fun navigateRecordCreation() = this@MainViewModel.navigateRecord(null)
+
+        override fun navigateRecord(id: Long) = this@MainViewModel.navigateRecord(id)
 
         override fun navigateRecordList() = this@MainViewModel.navigateRecordList()
     }
@@ -45,10 +47,10 @@ class MainViewModel(private val back: () -> Unit) : BackHandler {
         _router.value = MainScreen.RecordList(RecordListViewModel(mainRouter, recordsInteractor))
     }
 
-    private fun navigateRecordCreation() {
+    private fun navigateRecord(id: Long?) {
         val currentBackHandler = backHandler
         val currentScreen = _router.value
-        val screenVm = RecordViewModel(recordsInteractor) {
+        val screenVm = RecordViewModel(id, recordsInteractor) {
             backHandler = currentBackHandler
             _router.value = currentScreen
         }

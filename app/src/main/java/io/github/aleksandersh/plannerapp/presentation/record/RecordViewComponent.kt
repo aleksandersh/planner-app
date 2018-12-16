@@ -8,16 +8,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
-import android.widget.Button
-import android.widget.FrameLayout
-import android.widget.LinearLayout
-import android.widget.ScrollView
+import android.widget.*
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import io.github.aleksandersh.plannerapp.R
 import io.github.aleksandersh.plannerapp.presentation.ViewComponent
+import io.github.aleksandersh.plannerapp.records.model.Record
 import io.github.aleksandersh.plannerapp.utils.*
 import java.util.*
 
@@ -32,6 +30,9 @@ class RecordViewComponent(
 
     private lateinit var dateButton: Button
     private lateinit var cycleView: View
+    private lateinit var titleEditText: EditText
+    private lateinit var descriptionEditText: EditText
+    private lateinit var repeatSwitch: SwitchMaterial
 
     override fun buildView(): ViewGroup = with(context) {
         val dip4 = dip(4)
@@ -48,9 +49,7 @@ class RecordViewComponent(
                             gravity = Gravity.CENTER
                             layoutTransition = LayoutTransition()
                             dateButton = button {
-                                setOnClickListener {
-                                    showDatePickerDialog()
-                                }
+                                setOnClickListener { viewModel.onClickChooseDate() }
                             }
                             addView(
                                 dateButton,
@@ -61,11 +60,12 @@ class RecordViewComponent(
                             addView(
                                 TextInputLayout(context).apply {
                                     hint = "Title"
+                                    titleEditText = TextInputEditText(context).apply {
+                                        doOnTextChanged { text -> viewModel.setTitle(text) }
+                                    }
                                     addView(
-                                        TextInputEditText(context).apply {
-                                            id = R.id.record_creation_edit_text_title
-                                            doOnTextChanged { text -> viewModel.title = text }
-                                        }
+                                        titleEditText,
+                                        LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT)
                                     )
                                 },
                                 linearLayoutParams(MATCH_PARENT, WRAP_CONTENT) {
@@ -75,32 +75,34 @@ class RecordViewComponent(
                             addView(
                                 TextInputLayout(context).apply {
                                     hint = "Description"
+                                    descriptionEditText = TextInputEditText(context).apply {
+                                        doOnTextChanged { text -> viewModel.setDescription(text) }
+                                    }
                                     addView(
-                                        TextInputEditText(context).apply {
-                                            id = R.id.record_creation_edit_text_description
-                                            doOnTextChanged { text -> viewModel.description = text }
-                                        }
+                                        descriptionEditText,
+                                        LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT)
                                     )
                                 },
                                 linearLayoutParams(MATCH_PARENT, WRAP_CONTENT) {
                                     setMargins(dip16, dip8, dip16, dip16)
                                 }
                             )
+                            repeatSwitch = SwitchMaterial(context).apply {
+                                text = "Repeat"
+                                textSize = 18f
+                                setOnCheckedChangeListener { _, isChecked ->
+                                    viewModel.setRepeatSelected(isChecked)
+                                }
+                            }
                             addView(
-                                SwitchMaterial(context).apply {
-                                    text = "Repeat"
-                                    textSize = 18f
-                                    isChecked = viewModel.isRepeatSelected
-                                    setOnCheckedChangeListener { _, isChecked ->
-                                        viewModel.setRepeatSelected(isChecked)
-                                    }
-                                },
+                                repeatSwitch,
                                 linearLayoutParams(MATCH_PARENT, WRAP_CONTENT) {
                                     setMargins(dip16, dip8, dip16, dip16)
                                 }
                             )
                             cycleView = textView {
                                 text = "CYCLE STUB"
+                                visibility = View.GONE
                             }
                             addView(
                                 cycleView,
@@ -135,11 +137,13 @@ class RecordViewComponent(
         viewModel.isCycleShowed.observe(this) { isCycleShowed ->
             cycleView.visibility = if (isCycleShowed) View.VISIBLE else View.GONE
         }
+        viewModel.showDateSelectionDialog.observe(this, ::showDateSelectionDialog)
+        viewModel.refreshRecord.observe(this, ::refreshRecord)
     }
 
-    private fun showDatePickerDialog() {
+    private fun showDateSelectionDialog(date: Date) {
         val calendar = GregorianCalendar()
-        calendar.time = viewModel.date
+        calendar.time = date
         DatePickerDialog( // TODO: DialogFragment
             context,
             DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
@@ -150,5 +154,11 @@ class RecordViewComponent(
             calendar.get(Calendar.MONTH),
             calendar.get(Calendar.DAY_OF_MONTH)
         ).show()
+    }
+
+    private fun refreshRecord(record: Record) {
+        titleEditText.setText(record.title)
+        descriptionEditText.setText(record.description)
+        repeatSwitch.isChecked = record.repeat
     }
 }
