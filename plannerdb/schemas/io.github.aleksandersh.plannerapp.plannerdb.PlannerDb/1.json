@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "b40192757921b3bfacfb27db0d3c500e",
+    "identityHash": "f9ce44edcdd6a2af2b11ddf0405b9081",
     "entities": [
       {
         "tableName": "records",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `timestamp` INTEGER NOT NULL, `title` TEXT NOT NULL, `description` TEXT NOT NULL, `repeat` INTEGER NOT NULL, `cycle` TEXT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `creation_date` INTEGER NOT NULL, `next_launch_date` INTEGER NOT NULL, `title` TEXT NOT NULL, `description` TEXT NOT NULL, `repeat` INTEGER NOT NULL, `cycle` TEXT NOT NULL, `cycle_step` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -15,8 +15,14 @@
             "notNull": true
           },
           {
-            "fieldPath": "date",
-            "columnName": "timestamp",
+            "fieldPath": "creationDate",
+            "columnName": "creation_date",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nextLaunchDate",
+            "columnName": "next_launch_date",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -43,6 +49,12 @@
             "columnName": "cycle",
             "affinity": "TEXT",
             "notNull": true
+          },
+          {
+            "fieldPath": "cycleStep",
+            "columnName": "cycle_step",
+            "affinity": "INTEGER",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -58,7 +70,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"b40192757921b3bfacfb27db0d3c500e\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"f9ce44edcdd6a2af2b11ddf0405b9081\")"
     ]
   }
 }

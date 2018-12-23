@@ -29,7 +29,7 @@ class RecordViewComponent(
 ) : ViewComponent<ViewGroup>(R.id.record_creation_component) {
 
     private lateinit var dateButton: Button
-    private lateinit var cycleView: View
+    private lateinit var cycleView: EditText
     private lateinit var titleEditText: EditText
     private lateinit var descriptionEditText: EditText
     private lateinit var repeatSwitch: SwitchMaterial
@@ -61,7 +61,7 @@ class RecordViewComponent(
                                 TextInputLayout(context).apply {
                                     hint = "Title"
                                     titleEditText = TextInputEditText(context).apply {
-                                        doOnTextChanged { text -> viewModel.setTitle(text) }
+                                        doOnTextChanged(viewModel::setTitle)
                                     }
                                     addView(
                                         titleEditText,
@@ -76,7 +76,7 @@ class RecordViewComponent(
                                 TextInputLayout(context).apply {
                                     hint = "Description"
                                     descriptionEditText = TextInputEditText(context).apply {
-                                        doOnTextChanged { text -> viewModel.setDescription(text) }
+                                        doOnTextChanged(viewModel::setDescription)
                                     }
                                     addView(
                                         descriptionEditText,
@@ -100,13 +100,13 @@ class RecordViewComponent(
                                     setMargins(dip16, dip8, dip16, dip16)
                                 }
                             )
-                            cycleView = textView {
-                                text = "CYCLE STUB"
+                            cycleView = EditText(context).apply {
                                 visibility = View.GONE
+                                doOnTextChanged(viewModel::setCycle)
                             }
                             addView(
                                 cycleView,
-                                linearLayoutParams(WRAP_CONTENT, WRAP_CONTENT) {
+                                linearLayoutParams(MATCH_PARENT, WRAP_CONTENT) {
                                     setMargins(dip16, dip8, dip16, dip8)
                                 }
                             )
@@ -160,5 +160,6 @@ class RecordViewComponent(
         titleEditText.setText(record.title)
         descriptionEditText.setText(record.description)
         repeatSwitch.isChecked = record.repeat
+        cycleView.setText(record.cycle)
     }
 }

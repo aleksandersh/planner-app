@@ -7,6 +7,18 @@ import android.view.View
  * @author AleksanderSh
  */
 data class RecordListItem(
-    val title: String,
-    val onClickListener: View.OnClickListener
-)
+    val id: Long,
+    val title: String
+) {
+
+    val onClickItemListener: View.OnClickListener? get() = _onClickItemListener
+    private var _onClickItemListener: View.OnClickListener? = null
+
+    constructor(
+        id: Long,
+        title: String,
+        onClickItemListener: View.OnClickListener
+    ) : this(id, title) {
+        _onClickItemListener = onClickItemListener
+    }
+}

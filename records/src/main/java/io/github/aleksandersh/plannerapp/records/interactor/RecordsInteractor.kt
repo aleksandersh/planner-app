@@ -3,6 +3,7 @@ package io.github.aleksandersh.plannerapp.records.interactor
 import io.github.aleksandersh.plannerapp.records.model.Record
 import io.github.aleksandersh.plannerapp.records.repository.RecordsRepository
 import kotlinx.coroutines.channels.ReceiveChannel
+import java.util.*
 
 /**
  * Created on 15.12.2018.
@@ -10,12 +11,17 @@ import kotlinx.coroutines.channels.ReceiveChannel
  */
 class RecordsInteractor(private val recordsRepository: RecordsRepository) {
 
-    fun getRecords(): List<Record> {
-        return recordsRepository.getRecords()
-    }
-
     fun subscribeRecords(): ReceiveChannel<List<Record>> {
         return recordsRepository.subscribeRecords()
+    }
+
+    fun subscribeRecordsForToday(): ReceiveChannel<List<Record>> {
+        // TODO: Observe current date
+        val calendar = GregorianCalendar()
+        calendar.set(Calendar.HOUR_OF_DAY, 23)
+        calendar.set(Calendar.MINUTE, 59)
+        calendar.set(Calendar.SECOND, 59)
+        return recordsRepository.subscribeRecordsBeforeLaunchDate(calendar.time)
     }
 
     fun getRecord(id: Long): Record {
@@ -24,5 +30,27 @@ class RecordsInteractor(private val recordsRepository: RecordsRepository) {
 
     fun updateRecord(record: Record): Record {
         return recordsRepository.updateRecord(record)
+    }
+
+    fun performRecordById(id: Long) {
+        val record = recordsRepository.getRecord(id)
+        if (record.repeat && record.cycle.isNotEmpty()) {
+            val cycle = record.cycle
+            var cycleStep = record.cycleStep
+            val calendar = GregorianCalendar()
+            calendar.set(Calendar.HOUR_OF_DAY, 0)
+            calendar.set(Calendar.MINUTE, 0)
+            calendar.set(Calendar.SECOND, 0)
+            do {
+                calendar.add(Calendar.DATE, 1)
+                if (++cycleStep >= cycle.length) {
+                    cycleStep = 0
+                }
+            } while (cycle[cycleStep] != '1')
+            val newRecord = record.copy(launchDate = calendar.time, cycleStep = cycleStep)
+            recordsRepository.updateRecord(newRecord)
+        } else {
+            recordsRepository.removeRecordById(id)
+        }
     }
 }

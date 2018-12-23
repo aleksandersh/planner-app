@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.github.aleksandersh.plannerapp.presentation.ViewComponent
 import io.github.aleksandersh.plannerapp.utils.dip
+import io.github.aleksandersh.plannerapp.utils.observe
 
 /**
  * Created on 16.12.2018.
@@ -65,5 +66,9 @@ class TodayViewComponent(
                 LinearLayoutCompat.LayoutParams(MATCH_PARENT, MATCH_PARENT)
             )
         }
+    }
+
+    override fun onAttach() {
+        viewModel.items.observe(this, recordListAdapter::submitList)
     }
 }

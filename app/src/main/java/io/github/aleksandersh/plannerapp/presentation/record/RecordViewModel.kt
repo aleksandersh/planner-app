@@ -36,10 +36,11 @@ class RecordViewModel(
     private val _refreshRecord = SingleLiveEvent<Record>()
     private val _showDateSelectionDialog = SingleLiveEvent<Date>()
 
-    private var _title: String = ""
-    private var _description: String = ""
-    private var _date: Date = Date()
-    private var _isRepeatSelected: Boolean = false
+    private var title: String = ""
+    private var description: String = ""
+    private var cycle: String = "1"
+    private var date: Date = Date()
+    private var isRepeatSelected: Boolean = false
 
     private lateinit var currentRecord: Record
 
@@ -57,36 +58,40 @@ class RecordViewModel(
     }
 
     fun setDate(date: Date) {
-        _date = date
+        this.date = date
         _dateTitle.value = dateFormatter.format(date)
     }
 
     fun setTitle(title: String) {
-        _title = title
+        this.title = title
     }
 
     fun setDescription(description: String) {
-        _description = description
+        this.description = description
     }
 
     fun setRepeatSelected(isSelected: Boolean) {
-        _isRepeatSelected = isSelected
+        this.isRepeatSelected = isSelected
         _isCycleShowed.value = isSelected
     }
 
+    fun setCycle(cycle: String) {
+        this.cycle = cycle
+    }
+
     fun onClickChooseDate() {
-        _showDateSelectionDialog.value = _date
+        _showDateSelectionDialog.value = date
     }
 
     fun onClickSaveChanges() {
         startCoroutine {
             withContext(Dispatchers.IO) {
                 val record = currentRecord.copy(
-                    date = _date,
-                    title = _title,
-                    description = _description,
-                    repeat = _isRepeatSelected,
-                    cycle = "1"
+                    creationDate = date,
+                    title = title,
+                    description = description,
+                    repeat = isRepeatSelected,
+                    cycle = cycle
                 )
                 recordsInteractor.updateRecord(record)
             }
@@ -112,7 +117,7 @@ class RecordViewModel(
         currentRecord = record
         setTitle(record.title)
         setDescription(record.description)
-        setDate(record.date)
+        setDate(record.creationDate)
         setRepeatSelected(record.repeat)
         requestUiRefresh(record)
     }
@@ -120,14 +125,16 @@ class RecordViewModel(
     private fun showEmptyRecord() {
         currentRecord = Record(
             id = 0,
-            date = _date,
-            title = _title,
-            description = _description,
-            repeat = _isRepeatSelected,
-            cycle = "1"
+            creationDate = Date(),
+            launchDate = date,
+            title = title,
+            description = description,
+            repeat = isRepeatSelected,
+            cycle = cycle,
+            cycleStep = 0
         )
-        _dateTitle.value = dateFormatter.format(_date)
-        _isCycleShowed.value = _isRepeatSelected
+        _dateTitle.value = dateFormatter.format(date)
+        _isCycleShowed.value = isRepeatSelected
         requestUiRefresh(currentRecord)
     }
 

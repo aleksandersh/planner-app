@@ -8,9 +8,11 @@ import java.util.*
  */
 data class Record(
     val id: Long,
-    val date: Date,
+    val creationDate: Date,
+    val launchDate: Date,
     val title: String,
     val description: String,
     val repeat: Boolean,
-    val cycle: String
+    val cycle: String,
+    val cycleStep: Int
 )

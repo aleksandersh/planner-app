@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import io.github.aleksandersh.plannerapp.plannerdb.entity.RecordEntity
+import java.util.*
 
 /**
  * Created on 02.12.2018.
@@ -15,6 +16,9 @@ interface RecordsDao {
 
     @Query("SELECT * FROM records")
     fun selectRecords(): List<RecordEntity>
+
+    @Query("SELECT * FROM records WHERE next_launch_date <= :date")
+    fun selectRecordsByNextLaunch(date: Date): List<RecordEntity>
 
     @Query("SELECT * FROM records WHERE id = :id")
     fun requireRecordById(id: Long): RecordEntity

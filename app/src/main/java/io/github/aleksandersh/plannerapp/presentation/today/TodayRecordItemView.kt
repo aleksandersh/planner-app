@@ -67,7 +67,6 @@ class TodayRecordItemView : LinearLayoutCompat {
     fun bindItem(item: TodayRecordItem) {
         titleTextView.text = item.title
         setOnClickListener(item.onClickItemListener)
-        doneButton.isEnabled = !item.isDone
         doneButton.setOnClickListener(item.onClickDoneListener)
     }
 }

@@ -52,6 +52,9 @@ class RecordListViewModel(
     }
 
     private fun mapRecord(record: Record): RecordListItem {
-        return RecordListItem(record.title, View.OnClickListener { onClickRecord(record.id) })
+        return RecordListItem(
+            record.id,
+            record.title,
+            View.OnClickListener { onClickRecord(record.id) })
     }
 }

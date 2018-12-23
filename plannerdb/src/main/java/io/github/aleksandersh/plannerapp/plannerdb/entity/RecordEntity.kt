@@ -14,8 +14,10 @@ data class RecordEntity(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     val id: Long,
-    @ColumnInfo(name = "timestamp")
-    val date: Date,
+    @ColumnInfo(name = "creation_date")
+    val creationDate: Date,
+    @ColumnInfo(name = "next_launch_date")
+    val nextLaunchDate: Date,
     @ColumnInfo(name = "title")
     val title: String,
     @ColumnInfo(name = "description")
@@ -23,5 +25,7 @@ data class RecordEntity(
     @ColumnInfo(name = "repeat")
     val repeat: Boolean,
     @ColumnInfo(name = "cycle")
-    val cycle: String
+    val cycle: String,
+    @ColumnInfo(name = "cycle_step")
+    val cycleStep: Int
 )

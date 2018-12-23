@@ -1,8 +1,17 @@
 package io.github.aleksandersh.plannerapp.presentation.today
 
+import android.view.View
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import io.github.aleksandersh.plannerapp.presentation.BaseViewModel
 import io.github.aleksandersh.plannerapp.presentation.main.MainRouter
+import io.github.aleksandersh.plannerapp.presentation.today.model.TodayRecordItem
 import io.github.aleksandersh.plannerapp.records.interactor.RecordsInteractor
+import io.github.aleksandersh.plannerapp.records.model.Record
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.channels.map
+import kotlinx.coroutines.launch
 
 /**
  * Created on 16.12.2018.
@@ -13,8 +22,12 @@ class TodayViewModel(
     private val recordsInteractor: RecordsInteractor
 ) : BaseViewModel() {
 
+    val items: LiveData<List<TodayRecordItem>> get() = _items
+
+    private val _items: MutableLiveData<List<TodayRecordItem>> = MutableLiveData()
+
     init {
-        recordsInteractor.subscribeRecords()
+        observeRecordsForToday()
     }
 
     fun onClickCreateRecord() {
@@ -23,5 +36,30 @@ class TodayViewModel(
 
     fun onClickShowAllRecords() {
         mainRouter.navigateRecordList()
+    }
+
+    private fun observeRecordsForToday() {
+        startCoroutine {
+            recordsInteractor.subscribeRecordsForToday()
+                .map { records -> records.map(::mapRecord) }
+                .consumeEach { items -> _items.value = items }
+        }
+    }
+
+    private fun onClickRecord(id: Long) {
+        mainRouter.navigateRecord(id)
+    }
+
+    private fun onClickRecordDone(id: Long) {
+        launch(Dispatchers.IO) { recordsInteractor.performRecordById(id) }
+    }
+
+    private fun mapRecord(record: Record): TodayRecordItem {
+        return TodayRecordItem(
+            record.id,
+            record.title,
+            View.OnClickListener { onClickRecord(record.id) },
+            View.OnClickListener { onClickRecordDone(record.id) }
+        )
     }
 }
