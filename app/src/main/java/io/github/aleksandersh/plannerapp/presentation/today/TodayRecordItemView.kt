@@ -1,72 +1,54 @@
 package io.github.aleksandersh.plannerapp.presentation.today
 
-import android.content.Context
-import android.util.AttributeSet
 import android.view.Gravity
+import android.view.View
+import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
-import android.widget.FrameLayout
+import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.appcompat.widget.AppCompatButton
-import androidx.appcompat.widget.LinearLayoutCompat
 import io.github.aleksandersh.plannerapp.presentation.today.model.TodayRecordItem
-import io.github.aleksandersh.plannerapp.utils.dip
+import org.jetbrains.anko.*
 
 /**
  * Created on 16.12.2018.
  * @author AleksanderSh
  */
-class TodayRecordItemView : LinearLayoutCompat {
+class TodayRecordItemView : AnkoComponent<ViewGroup> {
 
-    private val titleTextView: TextView
-    private val doneButton: AppCompatButton
+    private lateinit var layout: View
+    private lateinit var titleTextView: TextView
+    private lateinit var doneButton: Button
 
-    constructor(context: Context) : super(context)
-
-    constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
-
-    constructor(
-        context: Context,
-        attrs: AttributeSet,
-        defStyleAttr: Int
-    ) : super(context, attrs, defStyleAttr)
-
-    init {
+    override fun createView(ui: AnkoContext<ViewGroup>): View = with(ui) {
         val dip8 = dip(8)
         val dip16 = dip(16)
-        layoutParams = LinearLayoutCompat.LayoutParams(MATCH_PARENT, WRAP_CONTENT)
-        orientation = LinearLayoutCompat.VERTICAL
-        gravity = Gravity.CENTER
-        titleTextView = TextView(context).apply {
-            textSize = 16f
-        }
-        addView(
-            titleTextView,
-            LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT).apply {
-                setMargins(dip16, dip8, dip16, dip8)
+        layout = verticalLayout {
+            layoutParams = LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT)
+            gravity = Gravity.CENTER
+            titleTextView = textView {
+                textSize = 16f
+            }.lparams {
+                horizontalMargin = dip16
+                verticalMargin = dip8
             }
-        )
-        addView(
-            FrameLayout(context).apply {
-                gravity = Gravity.END
-                doneButton = AppCompatButton(context).apply {
-                    text = "DONE"
+            frameLayout {
+                doneButton = button {
+                    text = "Done"
+                }.lparams {
+                    horizontalMargin = dip16
+                    verticalMargin = dip8
+                    gravity = Gravity.END
                 }
-                addView(
-                    doneButton,
-                    FrameLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT).apply {
-                        setMargins(dip16, dip8, dip16, dip8)
-                    }
-                )
-            },
-            LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT)
-        )
+            }
+        }
+        layout
     }
 
     fun bindItem(item: TodayRecordItem) {
         titleTextView.text = item.title
-        setOnClickListener(item.onClickItemListener)
+        layout.setOnClickListener(item.onClickItemListener)
         doneButton.setOnClickListener(item.onClickDoneListener)
     }
 }

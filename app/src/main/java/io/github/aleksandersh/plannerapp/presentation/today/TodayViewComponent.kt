@@ -22,7 +22,7 @@ class TodayViewComponent(
     private val viewModel: TodayViewModel
 ) : ViewComponent<ViewGroup>() {
 
-    private val recordListAdapter: TodayRecordListAdapter = TodayRecordListAdapter(context)
+    private val recordListAdapter: TodayRecordListAdapter = TodayRecordListAdapter()
 
     override fun buildView(): ViewGroup {
         val dip8 = context.dip(8)
