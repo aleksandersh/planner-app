@@ -1,7 +1,7 @@
 package io.github.aleksandersh.plannerapp.records.repository
 
 import io.github.aleksandersh.plannerapp.records.model.Record
-import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.flow.Flow
 import java.util.*
 
 /**
@@ -10,9 +10,9 @@ import java.util.*
  */
 interface RecordsRepository {
 
-    fun subscribeRecords(): ReceiveChannel<List<Record>>
+    fun observeRecords(): Flow<List<Record>>
 
-    fun subscribeRecordsBeforeLaunchDate(date: Date): ReceiveChannel<List<Record>>
+    fun observeRecordsBeforeLaunchDate(date: Date): Flow<List<Record>>
 
     fun getRecord(id: Long): Record
 

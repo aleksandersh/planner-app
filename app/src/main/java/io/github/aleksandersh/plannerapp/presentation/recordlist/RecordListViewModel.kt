@@ -9,8 +9,8 @@ import io.github.aleksandersh.plannerapp.presentation.main.MainRouter
 import io.github.aleksandersh.plannerapp.presentation.recordlist.model.RecordListItem
 import io.github.aleksandersh.plannerapp.records.interactor.RecordsInteractor
 import io.github.aleksandersh.plannerapp.records.model.Record
-import kotlinx.coroutines.channels.consumeEach
-import kotlinx.coroutines.channels.map
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.map
 
 /**
  * Created on 01.12.2018.
@@ -44,10 +44,10 @@ class RecordListViewModel(
     }
 
     private fun subscribeRecords() {
-        startCoroutine {
-            recordsInteractor.subscribeRecords()
+        launchImmediate {
+            recordsInteractor.observeRecords()
                 .map { records -> records.map(::mapRecord) }
-                .consumeEach { items -> _items.value = items }
+                .collect { items -> _items.value = items }
         }
     }
 

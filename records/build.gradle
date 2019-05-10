@@ -25,4 +25,16 @@ repositories {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$versions.kotlin"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$versions.coroutines"
+
+    testImplementation "org.spekframework.spek2:spek-dsl-jvm:$versions.spek"
+    testRuntimeOnly "org.spekframework.spek2:spek-runner-junit5:$versions.spek"
+    testRuntimeOnly "org.jetbrains.kotlin:kotlin-reflect:$versions.kotlin"
+    testImplementation "org.mockito:mockito-core:$versions.mockito"
+    testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:$versions.mockito_kotlin"
+}
+
+test {
+    useJUnitPlatform {
+        includeEngines 'spek2'
+    }
 }

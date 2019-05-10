@@ -1,15 +1,19 @@
 package io.github.aleksandersh.plannerapp.repository
 
+import doFinally
 import io.github.aleksandersh.plannerapp.plannerdb.dao.RecordsDao
 import io.github.aleksandersh.plannerapp.plannerdb.entity.RecordEntity
 import io.github.aleksandersh.plannerapp.records.model.Record
 import io.github.aleksandersh.plannerapp.records.repository.RecordsRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.channels.ReceiveChannel
-import kotlinx.coroutines.channels.distinct
+import kotlinx.coroutines.channels.SendChannel
+import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import java.util.*
 import java.util.concurrent.CopyOnWriteArrayList
@@ -27,20 +31,23 @@ class RecordsRepositoryImpl(
     private val recordsChannel = ConflatedBroadcastChannel<List<Record>>()
     private val beforeLaunchDateSubscriptions = CopyOnWriteArrayList<BeforeLaunchDateSubscription>()
 
-    override fun subscribeRecords(): ReceiveChannel<List<Record>> {
+    override fun observeRecords(): Flow<List<Record>> {
         if (isChannelInitialized.compareAndSet(false, true)) {
             onRecordsChanged()
         }
-        return recordsChannel.openSubscription().distinct()
+        return recordsChannel.asFlow().distinctUntilChanged()
     }
 
-    override fun subscribeRecordsBeforeLaunchDate(date: Date): ReceiveChannel<List<Record>> {
-        val channel = Channel<List<Record>>(Channel.CONFLATED)
+    override fun observeRecordsBeforeLaunchDate(date: Date): Flow<List<Record>> {
+        val channel = ConflatedBroadcastChannel<List<Record>>()
         val subscription = BeforeLaunchDateSubscription(date, channel)
-        refreshRecordsForSubscription(subscription)
-        channel.invokeOnClose { beforeLaunchDateSubscriptions.remove(subscription) }
-        beforeLaunchDateSubscriptions.add(subscription)
-        return channel.distinct()
+        return flow {
+            refreshRecordsForSubscription(subscription)
+            beforeLaunchDateSubscriptions.add(subscription)
+            channel.openSubscription().consumeEach { value -> emit(value) }
+        }.doFinally {
+            beforeLaunchDateSubscriptions.remove(subscription)
+        }.distinctUntilChanged()
     }
 
     override fun getRecord(id: Long): Record {
@@ -109,5 +116,8 @@ class RecordsRepositoryImpl(
         )
     }
 
-    private class BeforeLaunchDateSubscription(val date: Date, val channel: Channel<List<Record>>)
+    private class BeforeLaunchDateSubscription(
+        val date: Date,
+        val channel: SendChannel<List<Record>>
+    )
 }

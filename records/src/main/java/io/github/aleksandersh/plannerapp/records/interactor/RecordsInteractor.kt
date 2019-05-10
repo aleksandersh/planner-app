@@ -2,7 +2,7 @@ package io.github.aleksandersh.plannerapp.records.interactor
 
 import io.github.aleksandersh.plannerapp.records.model.Record
 import io.github.aleksandersh.plannerapp.records.repository.RecordsRepository
-import kotlinx.coroutines.channels.ReceiveChannel
+import kotlinx.coroutines.flow.Flow
 import java.util.*
 
 /**
@@ -11,17 +11,17 @@ import java.util.*
  */
 class RecordsInteractor(private val recordsRepository: RecordsRepository) {
 
-    fun subscribeRecords(): ReceiveChannel<List<Record>> {
-        return recordsRepository.subscribeRecords()
+    fun observeRecords(): Flow<List<Record>> {
+        return recordsRepository.observeRecords()
     }
 
-    fun subscribeRecordsForToday(): ReceiveChannel<List<Record>> {
+    fun observeRecordsForToday(): Flow<List<Record>> {
         // TODO: Observe current date
         val calendar = GregorianCalendar()
         calendar.set(Calendar.HOUR_OF_DAY, 23)
         calendar.set(Calendar.MINUTE, 59)
         calendar.set(Calendar.SECOND, 59)
-        return recordsRepository.subscribeRecordsBeforeLaunchDate(calendar.time)
+        return recordsRepository.observeRecordsBeforeLaunchDate(calendar.time)
     }
 
     fun getRecord(id: Long): Record {

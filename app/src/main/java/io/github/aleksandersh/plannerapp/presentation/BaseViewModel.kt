@@ -10,12 +10,13 @@ import kotlin.coroutines.CoroutineContext
 open class BaseViewModel : CoroutineScope {
 
     override val coroutineContext: CoroutineContext get() = viewModelContext + Dispatchers.Main
-    private val viewModelContext = Job()
+    private val viewModelContext = SupervisorJob()
 
-    protected fun startCoroutine(block: suspend CoroutineScope.() -> Unit): Job {
-        return launch(start = CoroutineStart.UNDISPATCHED, block = block)
+    protected fun launchImmediate(block: suspend CoroutineScope.() -> Unit): Job {
+        return launch(Dispatchers.Main.immediate, block = block)
     }
 
+    // TODO: This is not called
     fun onDestroy() {
         viewModelContext.cancel()
     }
