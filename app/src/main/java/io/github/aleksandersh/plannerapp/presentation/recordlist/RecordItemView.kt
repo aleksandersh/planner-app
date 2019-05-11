@@ -30,15 +30,15 @@ class RecordItemView : LinearLayout {
 
     init {
         val dip16 = context.dip(16)
-        layoutParams = LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT)
-        orientation = LinearLayout.HORIZONTAL
+        layoutParams = LayoutParams(MATCH_PARENT, WRAP_CONTENT)
+        orientation = HORIZONTAL
         gravity = Gravity.CENTER
         titleTextView = TextView(context).apply {
             textSize = 16f
         }
         addView(
             titleTextView,
-            LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT).apply {
+            LayoutParams(WRAP_CONTENT, WRAP_CONTENT).apply {
                 setMargins(dip16, dip16, dip16, dip16)
             }
         )

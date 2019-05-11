@@ -9,7 +9,10 @@ import androidx.annotation.Px
 import androidx.core.view.updateMargins
 import androidx.core.view.updateMarginsRelative
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProviders
 import io.github.aleksandersh.plannerapp.presentation.base.ViewComponent
 
 inline fun <reified VM : ViewModel> FragmentActivity.provideViewModel(): VM {
@@ -46,13 +49,6 @@ fun ViewGroup.MarginLayoutParams.updateMarginsRelativeCompat(
         val endCompat = if (end > -1) end else rightMargin
         updateMargins(startCompat, top, endCompat, bottom)
     }
-}
-
-inline fun <T> LiveData<T>.observe(
-    lifecycleOwner: LifecycleOwner,
-    crossinline observer: (T) -> Unit
-) {
-    observe(lifecycleOwner, Observer { observer(it) })
 }
 
 inline fun <T> ViewComponent<*>.observe(

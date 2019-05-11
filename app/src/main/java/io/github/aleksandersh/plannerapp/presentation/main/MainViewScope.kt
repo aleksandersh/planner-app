@@ -2,8 +2,8 @@ package io.github.aleksandersh.plannerapp.presentation.main
 
 import androidx.lifecycle.LiveData
 import io.github.aleksandersh.plannerapp.app.Dependencies
-import io.github.aleksandersh.plannerapp.presentation.main.model.MainScreen
 import io.github.aleksandersh.plannerapp.presentation.base.ViewScope
+import io.github.aleksandersh.plannerapp.presentation.main.model.MainScreen
 import io.github.aleksandersh.plannerapp.presentation.record.RecordViewScope
 import io.github.aleksandersh.plannerapp.presentation.recordlist.RecordListViewScope
 import io.github.aleksandersh.plannerapp.presentation.today.TodayViewScope
@@ -42,8 +42,11 @@ class MainViewScope : ViewScope {
         if (_childStack.isEmpty()) return false
         if (_childStack.first.viewScope.handleBack()) return true
         _childStack.pop().viewScope.onFinish()
-        _back.value = true
-        return _childStack.isNotEmpty()
+        if (_childStack.isNotEmpty()) {
+            _back.value = true
+            return true
+        }
+        return false
     }
 
     private fun navigateRecordList() {
