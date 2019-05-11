@@ -11,8 +11,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".presentation.example.MainActivity" />
-
         <activity
             android:name=".presentation.planner.PlannerActivity"
             android:windowSoftInputMode="stateUnchanged">

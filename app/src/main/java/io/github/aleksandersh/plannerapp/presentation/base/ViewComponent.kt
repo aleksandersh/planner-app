@@ -42,6 +42,7 @@ abstract class ViewComponent<V : View> : LifecycleOwner {
 
     fun attach(state: Lifecycle.State) {
         if (isFirstAttach) {
+            checkViewInitialized()
             isFirstAttach = false
             onFirstAttach()
         }

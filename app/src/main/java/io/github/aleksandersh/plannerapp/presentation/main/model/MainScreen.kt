@@ -11,11 +11,21 @@ import io.github.aleksandersh.plannerapp.presentation.today.TodayViewScope
  */
 sealed class MainScreen {
 
+    abstract val title: String
     abstract val viewScope: ViewScope
 
-    class Today(override val viewScope: TodayViewScope) : MainScreen()
+    class Today(override val viewScope: TodayViewScope) : MainScreen() {
 
-    class RecordList(override val viewScope: RecordListViewScope) : MainScreen()
+        override val title: String = "Plans for today"
+    }
 
-    class NewRecord(override val viewScope: RecordViewScope) : MainScreen()
+    class RecordList(override val viewScope: RecordListViewScope) : MainScreen() {
+
+        override val title: String = "Records"
+    }
+
+    class NewRecord(
+        override val title: String = "Record",
+        override val viewScope: RecordViewScope
+    ) : MainScreen()
 }

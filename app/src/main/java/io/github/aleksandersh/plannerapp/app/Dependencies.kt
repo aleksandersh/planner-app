@@ -15,10 +15,11 @@ import io.github.aleksandersh.plannerapp.repository.RecordsRepositoryImpl
 @SuppressLint("StaticFieldLeak")
 object Dependencies {
 
-    var context: Context? = null
+    lateinit var context: Context
 
     val recordsInteractor: RecordsInteractor by lazy { RecordsInteractor(recordsRepository) }
+
     private val recordsRepository: RecordsRepository by lazy { RecordsRepositoryImpl(recordsDao) }
     private val recordsDao: RecordsDao by lazy { db.getRecordsDao() }
-    private val db: PlannerDb by lazy { PlannerDb.getInstance(context!!) }
+    private val db: PlannerDb by lazy { PlannerDb.getInstance(context) }
 }

@@ -17,12 +17,12 @@ import java.util.*
 class MainViewScope : ViewScope {
 
     val router: LiveData<MainScreen> get() = _router
-    val back: LiveData<Boolean> get() = _back
-    val childStack: List<MainScreen> get() = _childStack.toList()
+    val back: LiveData<MainScreen> get() = _back
 
     private val _router = SingleLiveEvent<MainScreen>()
-    private val _back = SingleLiveEvent<Boolean>()
-    private val _childStack = LinkedList<MainScreen>()
+    private val _back = SingleLiveEvent<MainScreen>()
+
+    private val childStack = LinkedList<MainScreen>()
     private val recordsInteractor = Dependencies.recordsInteractor
 
     private val mainRouter = object : MainRouter {
@@ -35,18 +35,22 @@ class MainViewScope : ViewScope {
     }
 
     init {
-        navigateToday()
+        childStack.push(MainScreen.Today(TodayViewScope(mainRouter, recordsInteractor)))
     }
 
     override fun handleBack(): Boolean {
-        if (_childStack.isEmpty()) return false
-        if (_childStack.first.viewScope.handleBack()) return true
-        _childStack.pop().viewScope.onFinish()
-        if (_childStack.isNotEmpty()) {
-            _back.value = true
+        if (childStack.isEmpty()) return false
+        if (childStack.first.viewScope.handleBack()) return true
+        childStack.pop().viewScope.onFinish()
+        if (childStack.isNotEmpty()) {
+            _back.value = childStack.first
             return true
         }
         return false
+    }
+
+    fun getCurrentStack(): List<MainScreen> {
+        return childStack.toList()
     }
 
     private fun navigateRecordList() {
@@ -54,15 +58,11 @@ class MainViewScope : ViewScope {
     }
 
     private fun navigateRecord(id: Long?) {
-        navigate(MainScreen.NewRecord(RecordViewScope(id, recordsInteractor)))
-    }
-
-    private fun navigateToday() {
-        navigate(MainScreen.Today(TodayViewScope(mainRouter, recordsInteractor)))
+        navigate(MainScreen.NewRecord("Record $id", RecordViewScope(id, recordsInteractor)))
     }
 
     private fun navigate(screen: MainScreen) {
-        _childStack.push(screen)
+        childStack.push(screen)
         _router.value = screen
     }
 }

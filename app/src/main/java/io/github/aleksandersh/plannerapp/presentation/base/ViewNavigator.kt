@@ -9,7 +9,10 @@ import java.util.*
  * Created on 24.11.2018.
  * @author AleksanderSh
  */
-class ViewNavigator(private val mainComponent: ViewComponent<ViewGroup>) {
+class ViewNavigator(
+    private val mainComponent: ViewComponent<ViewGroup>,
+    private val childContainer: ViewGroup
+) {
 
     private val childStack = LinkedList<ViewComponent<*>>()
 
@@ -19,7 +22,7 @@ class ViewNavigator(private val mainComponent: ViewComponent<ViewGroup>) {
 
     fun addToStack(component: ViewComponent<*>) {
         childStack.firstOrNull()?.view?.visibility = View.GONE
-        mainComponent.view.addView(component.view, component.layoutParams)
+        childContainer.addView(component.view, component.layoutParams)
         mainComponent.bind(component)
         childStack.push(component)
     }
@@ -28,7 +31,7 @@ class ViewNavigator(private val mainComponent: ViewComponent<ViewGroup>) {
         if (childStack.isNotEmpty()) {
             val child = childStack.pop()
             mainComponent.unbind(child)
-            mainComponent.view.removeView(child.view)
+            childContainer.removeView(child.view)
             childStack.firstOrNull()?.view?.visibility = View.VISIBLE
         }
     }
