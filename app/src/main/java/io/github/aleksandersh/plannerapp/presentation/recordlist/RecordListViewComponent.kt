@@ -1,15 +1,16 @@
 package io.github.aleksandersh.plannerapp.presentation.recordlist
 
 import android.content.Context
+import android.view.Gravity
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.LinearLayout
+import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import io.github.aleksandersh.plannerapp.R
-import io.github.aleksandersh.plannerapp.presentation.ViewComponent
+import io.github.aleksandersh.plannerapp.presentation.base.ViewComponent
 import io.github.aleksandersh.plannerapp.utils.*
 
 /**
@@ -18,8 +19,18 @@ import io.github.aleksandersh.plannerapp.utils.*
  */
 class RecordListViewComponent(
     private val context: Context,
-    private val viewModel: RecordListViewModel
+    private val viewModel: RecordListViewScope
 ) : ViewComponent<ViewGroup>() {
+
+    private object ID {
+
+        val recyclerViewRecords = ViewCompat.generateViewId()
+    }
+
+    override val layoutParams: ViewGroup.LayoutParams =
+        frameLayoutParams(MATCH_PARENT, MATCH_PARENT) {
+            gravity = Gravity.CENTER
+        }
 
     private val recordsAdapter: RecordListAdapter = RecordListAdapter(context)
 
@@ -47,7 +58,7 @@ class RecordListViewComponent(
             )
             addView(
                 RecyclerView(context).apply {
-                    id = R.id.record_list_recycler_view
+                    id = ID.recyclerViewRecords
                     adapter = recordsAdapter
                     layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
                     addItemDecoration(

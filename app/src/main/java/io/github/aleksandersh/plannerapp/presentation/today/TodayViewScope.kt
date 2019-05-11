@@ -3,7 +3,7 @@ package io.github.aleksandersh.plannerapp.presentation.today
 import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import io.github.aleksandersh.plannerapp.presentation.BaseViewModel
+import io.github.aleksandersh.plannerapp.presentation.base.BaseViewScope
 import io.github.aleksandersh.plannerapp.presentation.main.MainRouter
 import io.github.aleksandersh.plannerapp.presentation.today.model.TodayRecordItem
 import io.github.aleksandersh.plannerapp.records.interactor.RecordsInteractor
@@ -17,10 +17,10 @@ import kotlinx.coroutines.launch
  * Created on 16.12.2018.
  * @author AleksanderSh
  */
-class TodayViewModel(
+class TodayViewScope(
     private val mainRouter: MainRouter,
     private val recordsInteractor: RecordsInteractor
-) : BaseViewModel() {
+) : BaseViewScope() {
 
     val items: LiveData<List<TodayRecordItem>> get() = _items
 

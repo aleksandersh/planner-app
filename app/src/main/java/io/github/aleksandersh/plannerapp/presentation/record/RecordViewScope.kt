@@ -2,8 +2,7 @@ package io.github.aleksandersh.plannerapp.presentation.record
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import io.github.aleksandersh.plannerapp.presentation.BackHandler
-import io.github.aleksandersh.plannerapp.presentation.BaseViewModel
+import io.github.aleksandersh.plannerapp.presentation.base.BaseViewScope
 import io.github.aleksandersh.plannerapp.records.interactor.RecordsInteractor
 import io.github.aleksandersh.plannerapp.records.model.Record
 import io.github.aleksandersh.plannerapp.utils.SingleLiveEvent
@@ -18,16 +17,16 @@ import java.util.*
  * Created on 25.11.2018.
  * @author AleksanderSh
  */
-class RecordViewModel(
+class RecordViewScope(
     recordId: Long?,
-    private val recordsInteractor: RecordsInteractor,
-    private val back: () -> Unit
-) : BaseViewModel(), BackHandler {
+    private val recordsInteractor: RecordsInteractor
+) : BaseViewScope() {
 
     val dateTitle: LiveData<String> get() = _dateTitle
     val isCycleShowed: LiveData<Boolean> get() = _isCycleShowed
     val refreshRecord: LiveData<Record> get() = _refreshRecord
     val showDateSelectionDialog: LiveData<Date> get() = _showDateSelectionDialog
+    val finish: LiveData<Boolean> get() = _finish
 
     private val dateFormatter: DateFormat = SimpleDateFormat("dd MMMM yyyy", Locale.getDefault())
 
@@ -35,6 +34,7 @@ class RecordViewModel(
     private val _isCycleShowed = MutableLiveData<Boolean>()
     private val _refreshRecord = SingleLiveEvent<Record>()
     private val _showDateSelectionDialog = SingleLiveEvent<Date>()
+    private val _finish = SingleLiveEvent<Boolean>()
 
     private var title: String = ""
     private var description: String = ""
@@ -50,11 +50,6 @@ class RecordViewModel(
         } else {
             showEmptyRecord()
         }
-    }
-
-    override fun handleBack(): Boolean {
-        back()
-        return true
     }
 
     fun setDate(date: Date) {
@@ -84,7 +79,7 @@ class RecordViewModel(
     }
 
     fun onClickSaveChanges() {
-        startCoroutine {
+        launchImmediate {
             withContext(Dispatchers.IO) {
                 val record = currentRecord.copy(
                     creationDate = date,
@@ -95,12 +90,12 @@ class RecordViewModel(
                 )
                 recordsInteractor.updateRecord(record)
             }
-            back()
+            finish()
         }
     }
 
     private fun loadRecord(id: Long) {
-        startCoroutine {
+        launchImmediate {
             val result = runCatching {
                 withContext(Dispatchers.IO) {
                     recordsInteractor.getRecord(id)
@@ -140,5 +135,9 @@ class RecordViewModel(
 
     private fun requestUiRefresh(record: Record) {
         _refreshRecord.value = record
+    }
+
+    private fun finish() {
+        _finish.value = true
     }
 }

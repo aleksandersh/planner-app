@@ -1,3 +1,5 @@
+package io.github.aleksandersh.plannerapp.utils.coroutines
+
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow

@@ -2,24 +2,15 @@ package io.github.aleksandersh.plannerapp.presentation.main
 
 import android.animation.LayoutTransition
 import android.content.Context
-import android.view.Gravity
 import android.view.ViewGroup
-import android.view.ViewGroup.LayoutParams.MATCH_PARENT
-import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.FrameLayout
-import io.github.aleksandersh.plannerapp.R
-import io.github.aleksandersh.plannerapp.presentation.ViewComponent
-import io.github.aleksandersh.plannerapp.presentation.ViewNavigator
+import io.github.aleksandersh.plannerapp.presentation.base.ViewComponent
+import io.github.aleksandersh.plannerapp.presentation.base.ViewNavigator
 import io.github.aleksandersh.plannerapp.presentation.main.model.MainScreen
 import io.github.aleksandersh.plannerapp.presentation.record.RecordViewComponent
-import io.github.aleksandersh.plannerapp.presentation.record.RecordViewModel
 import io.github.aleksandersh.plannerapp.presentation.recordlist.RecordListViewComponent
-import io.github.aleksandersh.plannerapp.presentation.recordlist.RecordListViewModel
 import io.github.aleksandersh.plannerapp.presentation.today.TodayViewComponent
-import io.github.aleksandersh.plannerapp.presentation.today.TodayViewModel
-import io.github.aleksandersh.plannerapp.utils.dip
-import io.github.aleksandersh.plannerapp.utils.frameLayoutParams
-import io.github.aleksandersh.plannerapp.utils.observe
+import io.github.aleksandersh.plannerapp.utils.observeNotNull
 
 /**
  * Created on 25.11.2018.
@@ -27,10 +18,10 @@ import io.github.aleksandersh.plannerapp.utils.observe
  */
 class MainViewComponent(
     private val context: Context,
-    private val viewModel: MainViewModel
-) : ViewComponent<ViewGroup>(R.id.main_component) {
+    private val viewScope: MainViewScope
+) : ViewComponent<ViewGroup>() {
 
-    private val navigator: ViewNavigator by lazy { ViewNavigator(this, 0) }
+    private val navigator = ViewNavigator(this)
 
     override fun buildView(): ViewGroup {
         return FrameLayout(context).apply {
@@ -38,53 +29,26 @@ class MainViewComponent(
         }
     }
 
-    override fun onAttach() {
-        viewModel.router.observe(this, ::onScreenChanged)
+    override fun onFirstAttach() {
+        navigator.restoreStack(viewScope.childStack.map(::getViewComponent))
     }
 
-    private fun onScreenChanged(screen: MainScreen) {
-        when (screen) {
-            is MainScreen.RecordList -> navigateRecordListScreen(navigator, screen.viewModel)
-            is MainScreen.NewRecord -> navigateRecordScreen(navigator, screen.viewModel)
-            is MainScreen.Today -> navigateTodayScreen(navigator, screen.viewModel)
+    override fun onAttach() {
+        observeNotNull(viewScope.router, ::onScreenChanged)
+        observeNotNull(viewScope.back) {
+            navigator.popBackStack()
         }
     }
 
-    private fun navigateRecordListScreen(
-        navigator: ViewNavigator,
-        recordListViewModel: RecordListViewModel
-    ) {
-        navigator.navigate(
-            RecordListViewComponent(context, recordListViewModel),
-            frameLayoutParams(MATCH_PARENT, MATCH_PARENT) {
-                gravity = Gravity.CENTER
-            }
-        )
+    private fun onScreenChanged(screen: MainScreen) {
+        navigator.addToStack(getViewComponent(screen))
     }
 
-    private fun navigateRecordScreen(
-        navigator: ViewNavigator,
-        recordViewModel: RecordViewModel
-    ) {
-        val dip16 = context.dip(16)
-        navigator.navigate(
-            RecordViewComponent(context, recordViewModel),
-            frameLayoutParams(MATCH_PARENT, WRAP_CONTENT) {
-                setMargins(dip16, dip16, dip16, dip16)
-                gravity = Gravity.CENTER
-            }
-        )
-    }
-
-    private fun navigateTodayScreen(
-        navigator: ViewNavigator,
-        todayViewModel: TodayViewModel
-    ) {
-        navigator.navigate(
-            TodayViewComponent(context, todayViewModel),
-            frameLayoutParams(MATCH_PARENT, MATCH_PARENT) {
-                gravity = Gravity.CENTER
-            }
-        )
+    private fun getViewComponent(screen: MainScreen): ViewComponent<*> {
+        return when (screen) {
+            is MainScreen.RecordList -> RecordListViewComponent(context, screen.viewScope)
+            is MainScreen.NewRecord -> RecordViewComponent(context, screen.viewScope)
+            is MainScreen.Today -> TodayViewComponent(context, screen.viewScope)
+        }
     }
 }

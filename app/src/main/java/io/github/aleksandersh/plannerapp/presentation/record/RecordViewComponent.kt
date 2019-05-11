@@ -1,6 +1,7 @@
 package io.github.aleksandersh.plannerapp.presentation.record
 
 import android.animation.LayoutTransition
+import android.app.Activity
 import android.app.DatePickerDialog
 import android.content.Context
 import android.view.Gravity
@@ -13,8 +14,7 @@ import com.google.android.material.card.MaterialCardView
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
-import io.github.aleksandersh.plannerapp.R
-import io.github.aleksandersh.plannerapp.presentation.ViewComponent
+import io.github.aleksandersh.plannerapp.presentation.base.ViewComponent
 import io.github.aleksandersh.plannerapp.records.model.Record
 import io.github.aleksandersh.plannerapp.utils.*
 import java.util.*
@@ -25,8 +25,15 @@ import java.util.*
  */
 class RecordViewComponent(
     private val context: Context,
-    private val viewModel: RecordViewModel
-) : ViewComponent<ViewGroup>(R.id.record_creation_component) {
+    private val viewModel: RecordViewScope
+) : ViewComponent<ViewGroup>() {
+
+    override val layoutParams: ViewGroup.LayoutParams =
+        frameLayoutParams(MATCH_PARENT, WRAP_CONTENT) {
+            val dip16 = context.dip(16)
+            setMargins(dip16, dip16, dip16, dip16)
+            gravity = Gravity.CENTER
+        }
 
     private lateinit var dateButton: Button
     private lateinit var cycleView: EditText
@@ -131,14 +138,17 @@ class RecordViewComponent(
     }
 
     override fun onAttach() {
-        viewModel.dateTitle.observe(this) { dateTitle ->
+        observeNotNull(viewModel.dateTitle) { dateTitle ->
             dateButton.text = dateTitle
         }
-        viewModel.isCycleShowed.observe(this) { isCycleShowed ->
+        observeNotNull(viewModel.isCycleShowed) { isCycleShowed ->
             cycleView.visibility = if (isCycleShowed) View.VISIBLE else View.GONE
         }
-        viewModel.showDateSelectionDialog.observe(this, ::showDateSelectionDialog)
-        viewModel.refreshRecord.observe(this, ::refreshRecord)
+        observeNotNull(viewModel.showDateSelectionDialog, ::showDateSelectionDialog)
+        observeNotNull(viewModel.refreshRecord, ::refreshRecord)
+        observeNotNull(viewModel.finish) {
+            (context as Activity).onBackPressed()
+        }
     }
 
     private fun showDateSelectionDialog(date: Date) {

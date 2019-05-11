@@ -6,7 +6,7 @@ import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
-import io.github.aleksandersh.plannerapp.presentation.ViewComponent
+import io.github.aleksandersh.plannerapp.presentation.base.ViewComponent
 import io.github.aleksandersh.plannerapp.presentation.main.MainViewComponent
 import io.github.aleksandersh.plannerapp.utils.provideViewModel
 
@@ -23,7 +23,7 @@ class PlannerActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         viewModel = provideViewModel()
-        mainComponent = MainViewComponent(this, viewModel.mainViewModel)
+        mainComponent = MainViewComponent(this, viewModel.mainViewScope)
         mainComponent.attach(Lifecycle.State.CREATED)
         setContentView(mainComponent.view, FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT))
 

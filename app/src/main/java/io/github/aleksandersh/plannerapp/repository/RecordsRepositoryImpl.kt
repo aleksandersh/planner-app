@@ -1,10 +1,10 @@
 package io.github.aleksandersh.plannerapp.repository
 
-import doFinally
 import io.github.aleksandersh.plannerapp.plannerdb.dao.RecordsDao
 import io.github.aleksandersh.plannerapp.plannerdb.entity.RecordEntity
 import io.github.aleksandersh.plannerapp.records.model.Record
 import io.github.aleksandersh.plannerapp.records.repository.RecordsRepository
+import io.github.aleksandersh.plannerapp.utils.coroutines.doFinally
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel

@@ -3,27 +3,25 @@ package io.github.aleksandersh.plannerapp.presentation.planner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import io.github.aleksandersh.plannerapp.presentation.BackHandler
-import io.github.aleksandersh.plannerapp.presentation.main.MainViewModel
+import io.github.aleksandersh.plannerapp.presentation.main.MainViewScope
+import io.github.aleksandersh.plannerapp.presentation.base.ViewScope
 
 /**
  * Created on 25.11.2018.
  * @author AleksanderSh
  */
-class PlannerViewModel : ViewModel(), BackHandler {
+class PlannerViewModel : ViewModel() {
 
+    val finish: LiveData<Boolean> get() = _finish
     private val _finish = MutableLiveData<Boolean>()
-    val finish: LiveData<Boolean> = _finish
 
-    val mainViewModel: MainViewModel = MainViewModel { handleBack() }
-    private var backHandler: BackHandler = mainViewModel
-
-    override fun handleBack(): Boolean {
-        _finish.value = true
-        return true
-    }
+    val mainViewScope: MainViewScope = MainViewScope()
+    private var childViewScope: ViewScope = mainViewScope
 
     fun onClickBack() {
-        backHandler.handleBack()
+        if (!childViewScope.handleBack()) {
+            childViewScope.onFinish()
+            _finish.value = true
+        }
     }
 }

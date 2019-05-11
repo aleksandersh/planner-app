@@ -1,6 +1,7 @@
-package io.github.aleksandersh.plannerapp.presentation
+package io.github.aleksandersh.plannerapp.presentation.base
 
 import android.view.View
+import android.view.ViewGroup
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
@@ -10,24 +11,27 @@ import java.util.*
  * Created on 24.11.2018.
  * @author AleksanderSh
  */
-abstract class ViewComponent<V : View>(val id: Int = View.NO_ID) : LifecycleOwner {
+abstract class ViewComponent<V : View> : LifecycleOwner {
 
-    private var _view: V? = null
+    open val layoutParams: ViewGroup.LayoutParams = ViewGroup.LayoutParams(
+        ViewGroup.LayoutParams.MATCH_PARENT,
+        ViewGroup.LayoutParams.MATCH_PARENT
+    )
+
     val view: V
         get() {
-            return _view ?: kotlin.run {
+            return _view ?: run {
                 val newView = buildView()
-                if (id != View.NO_ID) {
-                    newView.id = id
-                }
                 _view = newView
                 newView
             }
         }
+    private var _view: V? = null
 
     private val lifecycle = LifecycleRegistry(this)
     private val bindings = LinkedList<ViewComponent<*>>()
 
+    private var isFirstAttach = true
     private var isAttached = false
 
     abstract fun buildView(): V
@@ -37,26 +41,30 @@ abstract class ViewComponent<V : View>(val id: Int = View.NO_ID) : LifecycleOwne
     }
 
     fun attach(state: Lifecycle.State) {
+        if (isFirstAttach) {
+            isFirstAttach = false
+            onFirstAttach()
+        }
         if (!isAttached) {
             checkViewInitialized()
             isAttached = true
-            lifecycle.markState(state)
             onAttach()
+            lifecycle.currentState = state
             bindings.forEach { it.attach(state) }
         }
     }
 
     fun detach() {
         if (isAttached) {
-            isAttached = false
-            lifecycle.markState(Lifecycle.State.DESTROYED)
-            onDetach()
+            lifecycle.currentState = Lifecycle.State.DESTROYED
             bindings.forEach { it.detach() }
+            onDetach()
+            isAttached = false
         }
     }
 
     fun moveToState(state: Lifecycle.State) {
-        lifecycle.markState(state)
+        lifecycle.currentState = state
         bindings.forEach { it.moveToState(state) }
     }
 
@@ -68,6 +76,9 @@ abstract class ViewComponent<V : View>(val id: Int = View.NO_ID) : LifecycleOwne
     fun unbind(component: ViewComponent<*>) {
         bindings.remove(component)
         if (isAttached) component.detach()
+    }
+
+    protected open fun onFirstAttach() {
     }
 
     protected open fun onAttach() {

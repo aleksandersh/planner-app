@@ -10,6 +10,7 @@ import androidx.core.view.updateMargins
 import androidx.core.view.updateMarginsRelative
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.*
+import io.github.aleksandersh.plannerapp.presentation.base.ViewComponent
 
 inline fun <reified VM : ViewModel> FragmentActivity.provideViewModel(): VM {
     return ViewModelProviders.of(this).get(VM::class.java)
@@ -52,4 +53,18 @@ inline fun <T> LiveData<T>.observe(
     crossinline observer: (T) -> Unit
 ) {
     observe(lifecycleOwner, Observer { observer(it) })
+}
+
+inline fun <T> ViewComponent<*>.observe(
+    liveData: LiveData<T>,
+    crossinline observer: (T?) -> Unit
+) {
+    liveData.observe(this, Observer { observer(it) })
+}
+
+inline fun <T> ViewComponent<*>.observeNotNull(
+    liveData: LiveData<T>,
+    crossinline observer: (T) -> Unit
+) {
+    liveData.observe(this, Observer { it?.let(observer) })
 }

@@ -1,16 +1,19 @@
 package io.github.aleksandersh.plannerapp.presentation.today
 
 import android.content.Context
+import android.view.Gravity
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.LinearLayoutCompat
+import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import io.github.aleksandersh.plannerapp.presentation.ViewComponent
+import io.github.aleksandersh.plannerapp.presentation.base.ViewComponent
 import io.github.aleksandersh.plannerapp.utils.dip
+import io.github.aleksandersh.plannerapp.utils.frameLayoutParams
 import io.github.aleksandersh.plannerapp.utils.observe
 
 /**
@@ -19,8 +22,18 @@ import io.github.aleksandersh.plannerapp.utils.observe
  */
 class TodayViewComponent(
     private val context: Context,
-    private val viewModel: TodayViewModel
+    private val viewModel: TodayViewScope
 ) : ViewComponent<ViewGroup>() {
+
+    private object ID {
+
+        val recyclerViewRecords = ViewCompat.generateViewId()
+    }
+
+    override val layoutParams: ViewGroup.LayoutParams =
+        frameLayoutParams(MATCH_PARENT, MATCH_PARENT) {
+            gravity = Gravity.CENTER
+        }
 
     private val recordListAdapter: TodayRecordListAdapter = TodayRecordListAdapter()
 
@@ -57,6 +70,7 @@ class TodayViewComponent(
             )
             addView(
                 RecyclerView(context).apply {
+                    id = ID.recyclerViewRecords
                     layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
                     adapter = recordListAdapter
                     addItemDecoration(
