@@ -21,7 +21,7 @@ import io.github.aleksandersh.plannerapp.presentation.main.model.MainScreen
 import io.github.aleksandersh.plannerapp.presentation.record.RecordViewComponent
 import io.github.aleksandersh.plannerapp.presentation.recordlist.RecordListViewComponent
 import io.github.aleksandersh.plannerapp.presentation.today.TodayViewComponent
-import io.github.aleksandersh.plannerapp.utils.observeNotNull
+import io.github.aleksandersh.plannerapp.utils.observeNonNull
 import org.jetbrains.anko.*
 import org.jetbrains.anko.appcompat.v7.toolbar
 import org.jetbrains.anko.design.appBarLayout
@@ -74,8 +74,8 @@ class MainViewComponent(
     }
 
     override fun onAttach() {
-        observeNotNull(viewScope.router, ::navigateForward)
-        observeNotNull(viewScope.back, ::navigateBackward)
+        observeNonNull(viewScope.router, ::navigateForward)
+        observeNonNull(viewScope.back, ::navigateBackward)
     }
 
     private fun navigateForward(screen: MainScreen) {

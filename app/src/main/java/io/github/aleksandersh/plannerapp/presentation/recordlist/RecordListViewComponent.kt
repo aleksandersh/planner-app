@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.github.aleksandersh.plannerapp.presentation.base.AnkoViewComponent
-import io.github.aleksandersh.plannerapp.utils.observeNotNull
+import io.github.aleksandersh.plannerapp.utils.observeNonNull
 import org.jetbrains.anko.*
 import org.jetbrains.anko.recyclerview.v7.recyclerView
 
@@ -55,7 +55,7 @@ class RecordListViewComponent(
     }
 
     override fun onAttach() {
-        observeNotNull(viewModel.items) { items ->
+        observeNonNull(viewModel.items) { items ->
             recordsAdapter.setItems(items)
             recordsAdapter.notifyDataSetChanged()
         }

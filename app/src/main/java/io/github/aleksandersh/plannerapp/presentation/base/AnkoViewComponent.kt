@@ -16,7 +16,7 @@ abstract class AnkoViewComponent<V : View>(
     private val context: Context
 ) : ViewComponent<V>(), AnkoComponent<Context> {
 
-    override fun buildView(): V {
+    override fun createView(): V {
         return createView(AnkoContext.create(context))
     }
 

@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.github.aleksandersh.plannerapp.R
 import io.github.aleksandersh.plannerapp.presentation.base.AnkoViewComponent
-import io.github.aleksandersh.plannerapp.utils.observeNotNull
+import io.github.aleksandersh.plannerapp.utils.observeNonNull
 import org.jetbrains.anko.*
 import org.jetbrains.anko.recyclerview.v7.recyclerView
 
@@ -75,6 +75,6 @@ class TodayViewComponent(
     }
 
     override fun onAttach() {
-        observeNotNull(viewModel.items, recordListAdapter::submitList)
+        observeNonNull(viewModel.items, recordListAdapter::submitList)
     }
 }

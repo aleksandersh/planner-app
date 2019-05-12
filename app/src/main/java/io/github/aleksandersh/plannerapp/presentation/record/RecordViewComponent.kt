@@ -16,7 +16,7 @@ import androidx.core.view.ViewCompat
 import io.github.aleksandersh.plannerapp.presentation.base.AnkoViewComponent
 import io.github.aleksandersh.plannerapp.records.model.Record
 import io.github.aleksandersh.plannerapp.utils.doOnTextChanged
-import io.github.aleksandersh.plannerapp.utils.observeNotNull
+import io.github.aleksandersh.plannerapp.utils.observeNonNull
 import org.jetbrains.anko.*
 import org.jetbrains.anko.appcompat.v7.switchCompat
 import org.jetbrains.anko.cardview.v7.cardView
@@ -119,15 +119,15 @@ class RecordViewComponent(
     }
 
     override fun onAttach() {
-        observeNotNull(viewModel.dateTitle) { dateTitle ->
+        observeNonNull(viewModel.dateTitle) { dateTitle ->
             dateButton.text = dateTitle
         }
-        observeNotNull(viewModel.isCycleShowed) { isCycleShowed ->
+        observeNonNull(viewModel.isCycleShowed) { isCycleShowed ->
             cycleView.visibility = if (isCycleShowed) View.VISIBLE else View.GONE
         }
-        observeNotNull(viewModel.showDateSelectionDialog, ::showDateSelectionDialog)
-        observeNotNull(viewModel.refreshRecord, ::refreshRecord)
-        observeNotNull(viewModel.finish) {
+        observeNonNull(viewModel.showDateSelectionDialog, ::showDateSelectionDialog)
+        observeNonNull(viewModel.refreshRecord, ::refreshRecord)
+        observeNonNull(viewModel.finish) {
             (context as Activity).onBackPressed()
         }
     }

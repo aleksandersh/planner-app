@@ -36,7 +36,7 @@ inline fun <T> ViewComponent<*>.observe(
     liveData.observe(this, Observer { observer(it) })
 }
 
-inline fun <T> ViewComponent<*>.observeNotNull(
+inline fun <T> ViewComponent<*>.observeNonNull(
     liveData: LiveData<T>,
     crossinline observer: (T) -> Unit
 ) {
