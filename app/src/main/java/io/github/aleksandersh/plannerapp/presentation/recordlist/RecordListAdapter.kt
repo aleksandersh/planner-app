@@ -1,6 +1,5 @@
 package io.github.aleksandersh.plannerapp.presentation.recordlist
 
-import android.content.Context
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import io.github.aleksandersh.plannerapp.presentation.recordlist.model.RecordListItem
@@ -9,14 +8,12 @@ import io.github.aleksandersh.plannerapp.presentation.recordlist.model.RecordLis
  * Created on 01.12.2018.
  * @author AleksanderSh
  */
-class RecordListAdapter(
-    private val context: Context
-) : RecyclerView.Adapter<RecordListAdapter.ItemViewHolder>() {
+class RecordListAdapter : RecyclerView.Adapter<RecordListAdapter.ItemViewHolder>() {
 
     private var items: List<RecordListItem> = emptyList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
-        return ItemViewHolder(RecordItemView(context))
+        return ItemViewHolder(RecordItemWidget(parent))
     }
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
@@ -31,10 +28,12 @@ class RecordListAdapter(
         this.items = items
     }
 
-    class ItemViewHolder(private val view: RecordItemView) : RecyclerView.ViewHolder(view) {
+    class ItemViewHolder(
+        private val widget: RecordItemWidget
+    ) : RecyclerView.ViewHolder(widget.view) {
 
         fun bind(item: RecordListItem) {
-            view.setRecordItem(item)
+            widget.setRecordItem(item)
         }
     }
 }

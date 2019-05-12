@@ -1,17 +1,21 @@
 package io.github.aleksandersh.plannerapp.presentation.main
 
-import android.animation.LayoutTransition
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Typeface
 import android.text.TextUtils
+import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AccelerateInterpolator
 import android.view.animation.AnimationUtils
+import android.view.animation.DecelerateInterpolator
 import android.widget.TextSwitcher
 import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.ViewCompat
 import io.github.aleksandersh.plannerapp.presentation.base.AnkoViewComponent
-import io.github.aleksandersh.plannerapp.presentation.base.ViewComponent
+import io.github.aleksandersh.plannerapp.presentation.base.TransitionFactory
+import io.github.aleksandersh.plannerapp.presentation.base.TransitionHelper
 import io.github.aleksandersh.plannerapp.presentation.base.ViewNavigator
 import io.github.aleksandersh.plannerapp.presentation.main.model.MainScreen
 import io.github.aleksandersh.plannerapp.presentation.record.RecordViewComponent
@@ -58,9 +62,7 @@ class MainViewComponent(
                     }.lparams(matchParent, wrapContent)
                 }.lparams(matchParent, wrapContent)
             }.lparams(matchParent, wrapContent)
-            childContainer = frameLayout {
-                layoutTransition = LayoutTransition()
-            }.lparams(matchParent, matchParent)
+            childContainer = frameLayout().lparams(matchParent, matchParent)
             navigator = ViewNavigator(this@MainViewComponent, childContainer)
         }
     }
@@ -68,7 +70,7 @@ class MainViewComponent(
     override fun onFirstAttach() {
         val stack = viewScope.getCurrentStack()
         titleTextSwitcher.setCurrentText(stack.firstOrNull()?.title)
-        navigator.restoreStack(stack.map(::getViewComponent))
+        navigator.restoreStack(stack.map(::getComponentTransaction))
     }
 
     override fun onAttach() {
@@ -78,7 +80,7 @@ class MainViewComponent(
 
     private fun navigateForward(screen: MainScreen) {
         titleTextSwitcher.setText(screen.title)
-        navigator.addToStack(getViewComponent(screen))
+        navigator.addToStack(getComponentTransaction(screen))
     }
 
     private fun navigateBackward(screen: MainScreen) {
@@ -86,11 +88,40 @@ class MainViewComponent(
         navigator.popBackStack()
     }
 
-    private fun getViewComponent(screen: MainScreen): ViewComponent<*> {
+    private fun getComponentTransaction(screen: MainScreen): ViewNavigator.Transaction {
         return when (screen) {
-            is MainScreen.RecordList -> RecordListViewComponent(context, screen.viewScope)
-            is MainScreen.NewRecord -> RecordViewComponent(context, screen.viewScope)
-            is MainScreen.Today -> TodayViewComponent(context, screen.viewScope)
+            is MainScreen.RecordList -> ViewNavigator.Transaction(
+                RecordListViewComponent(context, screen.viewScope),
+                newcomerEnterTransition = newcomerEnterTransition(),
+                newcomerExitTransition = newcomerExitTransition()
+            )
+            is MainScreen.NewRecord -> ViewNavigator.Transaction(
+                RecordViewComponent(context, screen.viewScope),
+                newcomerEnterTransition = TransitionHelper.fadeIn(),
+                newcomerExitTransition = TransitionHelper.fadeOut()
+            )
+            is MainScreen.Today -> ViewNavigator.Transaction(
+                TodayViewComponent(context, screen.viewScope)
+            )
         }
+    }
+
+    private fun newcomerEnterTransition(): TransitionFactory = { view ->
+        view.alpha = 0f
+        view.visibility = View.VISIBLE
+        view.translationX = context.dip(64).toFloat()
+        ViewCompat.animate(view)
+            .setDuration(300)
+            .translationX(0f)
+            .setInterpolator(DecelerateInterpolator())
+            .alpha(1f)
+    }
+
+    private fun newcomerExitTransition(): TransitionFactory = { view ->
+        ViewCompat.animate(view)
+            .setDuration(300)
+            .translationX(context.dip(64).toFloat())
+            .setInterpolator(AccelerateInterpolator())
+            .alpha(0f)
     }
 }

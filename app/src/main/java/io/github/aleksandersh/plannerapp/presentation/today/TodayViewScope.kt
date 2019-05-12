@@ -58,6 +58,7 @@ class TodayViewScope(
         return TodayRecordItem(
             record.id,
             record.title,
+            record.description,
             View.OnClickListener { onClickRecord(record.id) },
             View.OnClickListener { onClickRecordDone(record.id) }
         )

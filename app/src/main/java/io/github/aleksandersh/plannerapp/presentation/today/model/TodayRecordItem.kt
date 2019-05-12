@@ -8,7 +8,8 @@ import android.view.View
  */
 data class TodayRecordItem(
     val id: Long,
-    val title: String
+    val title: String,
+    val description: String
 ) {
 
     val onClickItemListener: View.OnClickListener? get() = _onClickItemListener
@@ -19,9 +20,10 @@ data class TodayRecordItem(
     constructor(
         id: Long,
         title: String,
+        description: String,
         onClickItemListener: View.OnClickListener,
         onClickDoneListener: View.OnClickListener
-    ) : this(id, title) {
+    ) : this(id, title, description) {
         _onClickItemListener = onClickItemListener
         _onClickDoneListener = onClickDoneListener
     }

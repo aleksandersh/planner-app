@@ -4,11 +4,10 @@ import android.animation.LayoutTransition
 import android.app.Activity
 import android.app.DatePickerDialog
 import android.content.Context
+import android.graphics.Color
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewGroup.LayoutParams.MATCH_PARENT
-import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.Button
 import android.widget.EditText
 import android.widget.LinearLayout
@@ -17,7 +16,6 @@ import androidx.core.view.ViewCompat
 import io.github.aleksandersh.plannerapp.presentation.base.AnkoViewComponent
 import io.github.aleksandersh.plannerapp.records.model.Record
 import io.github.aleksandersh.plannerapp.utils.doOnTextChanged
-import io.github.aleksandersh.plannerapp.utils.frameLayoutParams
 import io.github.aleksandersh.plannerapp.utils.observeNotNull
 import org.jetbrains.anko.*
 import org.jetbrains.anko.appcompat.v7.switchCompat
@@ -43,13 +41,6 @@ class RecordViewComponent(
         val editTextCycle = ViewCompat.generateViewId()
     }
 
-    override val layoutParams: ViewGroup.LayoutParams =
-        frameLayoutParams(MATCH_PARENT, WRAP_CONTENT) {
-            val dip16 = context.dip(16)
-            setMargins(dip16, dip16, dip16, dip16)
-            gravity = Gravity.CENTER
-        }
-
     private lateinit var dateButton: Button
     private lateinit var titleEditText: EditText
     private lateinit var descriptionEditText: EditText
@@ -60,63 +51,70 @@ class RecordViewComponent(
         val dip4 = dip(4)
         val dip8 = dip(8)
         val dip16 = dip(16)
-        return cardView {
-            cardElevation = dip4.toFloat()
-            radius = dip4.toFloat()
-            scrollView {
-                linearLayout {
-                    orientation = LinearLayout.VERTICAL
-                    gravity = Gravity.CENTER
-                    layoutTransition = LayoutTransition()
-                    dateButton = button {
-                        setOnClickListener { viewModel.onClickChooseDate() }
-                    }.lparams(matchParent, wrapContent) {
-                        setMargins(dip16, dip16, dip16, dip8)
-                    }
-                    textInputLayout {
-                        hint = "Title"
-                        titleEditText = textInputEditText {
-                            id = ID.editTextTitle
-                            doOnTextChanged(viewModel::setTitle)
+        frameLayout {
+            isClickable = true
+            setBackgroundColor(Color.argb(220, 255, 255, 255))
+            cardView {
+                cardElevation = dip4.toFloat()
+                radius = dip4.toFloat()
+                scrollView {
+                    linearLayout {
+                        orientation = LinearLayout.VERTICAL
+                        gravity = Gravity.CENTER
+                        layoutTransition = LayoutTransition()
+                        dateButton = button {
+                            setOnClickListener { viewModel.onClickChooseDate() }
+                        }.lparams(matchParent, wrapContent) {
+                            setMargins(dip16, dip16, dip16, dip8)
                         }
-                    }.lparams(matchParent, wrapContent) {
-                        setMargins(dip16, dip16, dip16, dip8)
-                    }
-                    textInputLayout {
-                        hint = "Description"
-                        descriptionEditText = textInputEditText {
-                            id = ID.editTextDescription
-                            doOnTextChanged(viewModel::setDescription)
+                        textInputLayout {
+                            hint = "Title"
+                            titleEditText = textInputEditText {
+                                id = ID.editTextTitle
+                                doOnTextChanged(viewModel::setTitle)
+                            }
+                        }.lparams(matchParent, wrapContent) {
+                            setMargins(dip16, dip16, dip16, dip8)
                         }
-                    }.lparams(matchParent, wrapContent) {
-                        setMargins(dip16, dip8, dip16, dip16)
-                    }
-                    repeatSwitch = switchCompat {
-                        id = ID.switchRepeat
-                        text = "Repeat"
-                        textSize = 18f
-                        setOnCheckedChangeListener { _, isChecked ->
-                            viewModel.setRepeatSelected(isChecked)
+                        textInputLayout {
+                            hint = "Description"
+                            descriptionEditText = textInputEditText {
+                                id = ID.editTextDescription
+                                doOnTextChanged(viewModel::setDescription)
+                            }
+                        }.lparams(matchParent, wrapContent) {
+                            setMargins(dip16, dip8, dip16, dip16)
                         }
-                    }.lparams(matchParent, wrapContent) {
-                        setMargins(dip16, dip8, dip16, dip16)
-                    }
-                    cycleView = editText {
-                        id = ID.editTextCycle
-                        visibility = View.GONE
-                        doOnTextChanged(viewModel::setCycle)
-                    }.lparams(matchParent, wrapContent) {
-                        setMargins(dip16, dip8, dip16, dip16)
-                    }
-                    button("Save") {
-                        textSize = 16f
-                        setOnClickListener { viewModel.onClickSaveChanges() }
-                    }.lparams(matchParent, wrapContent) {
-                        setMargins(dip16, dip8, dip16, dip16)
-                        gravity = Gravity.END
-                    }
+                        repeatSwitch = switchCompat {
+                            id = ID.switchRepeat
+                            text = "Repeat"
+                            textSize = 18f
+                            setOnCheckedChangeListener { _, isChecked ->
+                                viewModel.setRepeatSelected(isChecked)
+                            }
+                        }.lparams(matchParent, wrapContent) {
+                            setMargins(dip16, dip8, dip16, dip16)
+                        }
+                        cycleView = editText {
+                            id = ID.editTextCycle
+                            visibility = View.GONE
+                            doOnTextChanged(viewModel::setCycle)
+                        }.lparams(matchParent, wrapContent) {
+                            setMargins(dip16, dip8, dip16, dip16)
+                        }
+                        button("Save") {
+                            textSize = 16f
+                            setOnClickListener { viewModel.onClickSaveChanges() }
+                        }.lparams(matchParent, wrapContent) {
+                            setMargins(dip16, dip8, dip16, dip16)
+                            gravity = Gravity.END
+                        }
+                    }.lparams(matchParent, wrapContent)
                 }.lparams(matchParent, wrapContent)
-            }.lparams(matchParent, wrapContent)
+            }.lparams(matchParent, wrapContent) {
+                setMargins(dip16, dip16, dip16, dip16)
+                gravity = Gravity.CENTER
+            }
         }
     }
 

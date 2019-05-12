@@ -1,6 +1,7 @@
 package io.github.aleksandersh.plannerapp.presentation.recordlist
 
 import android.content.Context
+import android.graphics.Color
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.core.view.ViewCompat
@@ -26,12 +27,13 @@ class RecordListViewComponent(
         val recyclerViewRecords = ViewCompat.generateViewId()
     }
 
-    private val recordsAdapter: RecordListAdapter = RecordListAdapter(context)
+    private val recordsAdapter: RecordListAdapter = RecordListAdapter()
 
     override fun buildAnkoView(ui: AnkoContext<Context>): ViewGroup = with(ui) {
         val dip8 = dip(8)
         val dip16 = dip(16)
         return linearLayout {
+            backgroundColor = Color.WHITE
             orientation = LinearLayout.VERTICAL
             textView("Okey, Gogol, show me exists records").lparams(matchParent, wrapContent) {
                 setMargins(dip8, dip16, dip8, dip16)
