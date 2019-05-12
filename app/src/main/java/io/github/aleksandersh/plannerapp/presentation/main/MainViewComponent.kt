@@ -40,7 +40,7 @@ class MainViewComponent(
     private lateinit var titleTextSwitcher: TextSwitcher
     private lateinit var childContainer: ViewGroup
 
-    override fun buildAnkoView(ui: AnkoContext<Context>): ViewGroup = with(ui) {
+    override fun createView(ui: AnkoContext<Context>): ViewGroup = with(ui) {
         verticalLayout {
             appBarLayout {
                 setLiftable(true)

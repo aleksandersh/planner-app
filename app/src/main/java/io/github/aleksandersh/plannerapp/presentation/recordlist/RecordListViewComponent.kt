@@ -29,7 +29,7 @@ class RecordListViewComponent(
 
     private val recordsAdapter: RecordListAdapter = RecordListAdapter()
 
-    override fun buildAnkoView(ui: AnkoContext<Context>): ViewGroup = with(ui) {
+    override fun createView(ui: AnkoContext<Context>): ViewGroup = with(ui) {
         val dip8 = dip(8)
         val dip16 = dip(16)
         return linearLayout {
